@@ -4,25 +4,52 @@ format: typst
 ---
 
 ### Question 1
-
-Put your question here.
+# Which Districts had the closest margins between top 2 candidates?
 
 ### Answer 1
 
 Put your answer here.
+# results <- g24 |>
+   group_by(DISTRICT, CAND_NAME, PARTY) |>
+   summarise(votes = sum(TOTALVOTES), .groups = "drop") |>
+   arrange(DISTRICT, desc(votes)) |>
+   group_by(DISTRICT) |>
+   slice_head(n = 2) |>
+   summarise(margin = abs(diff(votes)), .groups = "drop") |>
+   arrange(margin)
+
+# head(results)
 
 ### Question 2
 
 Put your question here.
-
+# What is the distribution of precinct sizes?
 ### Answer 2
 
 Put your answer here.
+# precinct_sizes <- g24 |>
+   group_by(SV_PREC_KEY) |>
+   summarise(total_votes = sum(TOTALVOTES), .groups = "drop")
+
+ ggplot(precinct_sizes, aes(total_votes)) +
+   geom_histogram(bins = 40) +
+  labs(title = "Distribution of Precinct Sizes")
 
 ### Question 3
 
 Put your question here.
-
+# What do thse results compare to district level results?
 ### Answer 3
 
 Put your answer here.
+# library(readxl)
+ district_official <- read_excel("data/g24-results-by-district.xlsx")
+
+ district_from_precincts <- g24 |>
+   group_by(DISTRICT) |>
+  summarise(total_votes = sum(TOTALVOTES), .groups = "drop")
+
+ compare <- district_from_precincts |>
+   left_join(district_official, by = "DISTRICT")
+
+ head(compare)

@@ -2,4 +2,25 @@
 title: Data Cleaning
 format: typst
 ---
+library(readr)
+library(dplyr)
+library(stringr)
 
+raw_path   <- "data/g24_sov_by_g24_svprec.csv"
+clean_path <- "data/g24_sov_by_g24_svprec_clean.csv"
+
+g24_raw <- read_csv(raw_path, show_col_types = FALSE)
+
+glimpse(g24_raw)
+summary(g24_raw)
+
+g24_clean <- g24_raw |>
+  mutate(
+    COUNTY   = as.character(COUNTY),
+    SVPREC_KEY    = as.character(SVPREC_KEY),
+    TOTVOTES    = as.integer(TOTALVOTES),
+       )
+
+glimpse(g24_clean)
+write_csv(g24_clean, clean_path)
+clean_path
